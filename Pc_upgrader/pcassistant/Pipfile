@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+asgiref = "==3.8.1"
+django = "==5.2.1"
+djangorestframework = "==3.16.0"
+pillow = "==12.0.0"
+sqlparse = "==0.5.3"
+tzdata = "==2025.2"
+pytest = "*"
+pytest-django = "*"
+pytest-cov = "*"
+pytest-xdist = "*"
+pytest-mock = "*"
+model-bakery = "*"
+selenium = "*"
+webdriver-manager = "*"
+python-dotenv = "*"
+
+[dev-packages]

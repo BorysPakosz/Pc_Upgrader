@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-md-4">
+        {% if component.img_src %}
+            <img src="{{ component.img_src }}" class="component-image-large" alt="{{ component.title }}">
+        {% elif component.image_url %}
+            <img src="{{ component.image_url }}" class="component-image-large" alt="{{ component.title }}">
+        {% else %}
+            <div class="text-center p-4 bg-light rounded">
+                <i class="fas fa-microchip fa-3x text-muted"></i>
+                <p class="mt-2 text-muted">Brak zdjęcia</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <table class="table component-details-table">
+            <tr><th>Model:</th><td>{{ component.title|default:component.model|default:"-" }}</td></tr>
+            <tr><th>Marka:</th><td>{{ component.brand|default:"-" }}</td></tr>
+            <tr><th>Part Number:</th><td>{{ component.part_number|default:"-" }}</td></tr>
+            <tr><th>Socket:</th><td>{{ component.socket|default:"-" }}</td></tr>
+            <tr><th>Rdzenie:</th><td>{{ component.cores|default:"-" }}</td></tr>
+            <tr><th>Częstotliwość:</th><td>{{ component.frequency|default:"-" }}</td></tr>
+            <tr><th>Odblokowany mnożnik:</th><td>{{ component.unlocked_multiplier|default:"-" }}</td></tr>
+            <tr><th>Benchmark:</th><td>{% if component.benchmark %}{{ component.benchmark|floatformat:0 }} pkt{% else %}-{% endif %}</td></tr>
+            <tr><th>Ranking:</th><td>{% if component.rank %}#{{ component.rank }}{% else %}-{% endif %}</td></tr>
+            <tr><th>Próbki testowe:</th><td>{% if component.samples %}{{ component.samples }}{% else %}-{% endif %}</td></tr>
+            <tr><th>Cena:</th><td><strong>{{ component.price|floatformat:2 }} zł</strong></td></tr>
+            <!-- ✅ DODAJ LINK DO SKLEPU -->
+            {% if component.product_page %}
+            <tr><th>Sklep:</th><td><a href="{{ component.product_page }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-external-link-alt"></i> Zobacz w sklepie</a></td></tr>
+            {% endif %}
+        </table>
+    </div>
+</div>

@@ -1,0 +1,139 @@
+{% extends "hardware/base.html" %}
+{% block title %}Moje komputery{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-desktop text-primary"></i>
+            Moje komputery
+        </h2>
+        <a href="{% url 'hardware:add_computer' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i>
+            Dodaj nowy komputer
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if computers %}
+        <div class="row">
+            {% for computer in computers %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if computer.image %}
+                        <div class="position-relative" style="padding-top: 56.25%; overflow: hidden;"> <!-- 16:9 aspect ratio -->
+                            <img src="{{ computer.image.url }}"
+                                 class="position-absolute top-0 start-0 w-100 h-100"
+                                 style="object-fit: contain; background-color: #f8f9fa;"
+                                 alt="{{ computer.name }}">
+                        </div>
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-desktop fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ computer.name }}</h5>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-microchip"></i> {{ computer.cpu_name|truncatechars:25 }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="fas fa-tv"></i> {{ computer.gpu_name|truncatechars:25 }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="fas fa-memory"></i> {{ computer.motherboard_name|truncatechars:25 }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="fas fa-bolt"></i> {{ computer.psu_watt }}W PSU
+                            </small>
+                        </div>
+
+                        {% if computer.description %}
+                            <p class="card-text text-muted small">{{ computer.description|truncatechars:80 }}</p>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                {% if computer.is_public %}
+                                    <i class="fas fa-globe text-success"></i> Publiczny
+                                {% else %}
+                                    <i class="fas fa-lock text-warning"></i> Prywatny
+                                {% endif %}
+                            </small>
+                            <small class="text-muted">{{ computer.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'hardware:use_computer' computer.id %}" class="btn btn-success btn-sm">
+                                <i class="fas fa-play"></i>
+                                Użyj w upgraderze
+                            </a>
+                            <a href="{% url 'hardware:edit_computer' computer.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                                Edytuj
+                            </a>
+                            <a href="{% url 'hardware:delete_computer' computer.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i>
+                                Usuń
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginacja -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Paginacja komputerów">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">Pierwsza</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Następna</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Ostatnia</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-desktop fa-5x text-muted mb-3"></i>
+            <h4 class="text-muted">Nie masz jeszcze żadnych komputerów</h4>
+            <p class="text-muted">Dodaj swój pierwszy komputer, aby móc go używać w upgraderze</p>
+            <a href="{% url 'hardware:add_computer' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i>
+                Dodaj pierwszy komputer
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

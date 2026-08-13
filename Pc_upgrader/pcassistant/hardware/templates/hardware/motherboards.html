@@ -1,0 +1,208 @@
+{% extends 'hardware/base.html' %}
+
+{% block title %}Płyty główne - Baza komponentów{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-4">
+            <i class="fas fa-microchip text-primary"></i> Płyty główne
+        </h1>
+    </div>
+</div>
+
+<!-- Filtry -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtry</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="producer" class="form-label">Producent</label>
+                <select name="producer" id="producer" class="form-select">
+                    <option value="">Wszyscy producenci</option>
+                    {% for producer in producers %}
+                        <option value="{{ producer.name }}" {% if selected_producer == producer.name %}selected{% endif %}>
+                            {{ producer.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="socket" class="form-label">Socket</label>
+                <select name="socket" id="socket" class="form-select">
+                    <option value="">Wszystkie sockety</option>
+                    {% for socket in sockets %}
+                        {% if socket %}
+                            <option value="{{ socket }}" {% if selected_socket == socket %}selected{% endif %}>
+                                {{ socket }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="form_factor" class="form-label">Format</label>
+                <select name="form_factor" id="form_factor" class="form-select">
+                    <option value="">Wszystkie formaty</option>
+                    {% for form_factor in form_factors %}
+                        {% if form_factor %}
+                            <option value="{{ form_factor }}" {% if selected_form_factor == form_factor %}selected{% endif %}>
+                                {{ form_factor }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Filtruj
+                </button>
+                <a href="{% url 'hardware:motherboards' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Wyczyść filtry
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista płyt głównych -->
+<div class="row">
+    {% for board in boards %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 component-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ board.name }}</h5>
+                    <p class="card-text">
+                        <strong>Producent:</strong> {{ board.producer.name|default:"Nieznany" }}<br>
+                        {% if board.socket %}
+                            <strong>Socket:</strong> {{ board.socket }}<br>
+                        {% endif %}
+                        {% if board.form_factor %}
+                            <strong>Format:</strong> {{ board.form_factor }}<br>
+                        {% endif %}
+                        {% if board.chipset %}
+                            <strong>Chipset:</strong> {{ board.chipset }}<br>
+                        {% endif %}
+                        {% if board.ram_slots %}
+                            <strong>Sloty RAM:</strong> {{ board.ram_slots }}<br>
+                        {% endif %}
+                        {% if board.max_ram %}
+                            <strong>Maks. RAM:</strong> {{ board.max_ram }} GB<br>
+                        {% endif %}
+                        {% if board.pcie_slots %}
+                            <strong>Sloty PCIe:</strong> {{ board.pcie_slots }}<br>
+                        {% endif %}
+                        {% if board.m2_slots %}
+                            <strong>Sloty M.2:</strong> {{ board.m2_slots }}<br>
+                        {% endif %}
+                        {% if board.wifi %}
+                            <strong>Wi-Fi:</strong>
+                            <span class="text-success">Tak</span><br>
+                        {% endif %}
+                        {% if board.bluetooth %}
+                            <strong>Bluetooth:</strong>
+                            <span class="text-success">Tak</span><br>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if board.price %}
+                            <span class="h5 text-primary mb-0">{{ board.price }} zł</span>
+                        {% else %}
+                            <span class="text-muted">Brak ceny</span>
+                        {% endif %}
+                        {% if board.product_page %}
+                            <a href="{{ board.product_page }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Zobacz
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i>
+                Nie znaleziono płyt głównych odpowiadających kryteriom wyszukiwania.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Statystyki -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <i class="fas fa-chart-bar"></i>
+            Znaleziono {{ boards.count }} płyt głównych
+        </div>
+    </div>
+</div>
+
+    <!-- Paginacja -->
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Paginacja" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Numery stron -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="text-center text-muted mt-2">
+            Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            ({{ page_obj.paginator.count }} elementów)
+        </div>
+    </nav>
+{% endif %}
+
+<!-- Zmień statystyki na końcu -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <i class="fas fa-chart-bar"></i>
+            Znaleziono {{ page_obj.paginator.count }} elementów
+            (strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }})
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "hardware/base.html" %}
+{% block title %}Logowanie{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <h2 class="mb-4 text-center">Zaloguj się</h2>
+
+    <form method="post" class="card p-3 p-md-4 shadow-sm">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" type="submit">Zaloguj</button>
+      </div>
+    </form>
+
+    <div class="d-flex justify-content-between mt-3">
+      <a class="btn btn-outline-secondary btn-sm" href="{% url 'password_reset' %}">🔑 Zapomniałeś hasła?</a>
+      <a class="btn btn-outline-success btn-sm" href="{% url 'hardware:register' %}">➕ Utwórz konto</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

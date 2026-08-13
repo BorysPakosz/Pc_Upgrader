@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-4">
+        {% if component.img_src %}
+            <img src="{{ component.img_src }}" class="component-image-large" alt="{{ component.name }}">
+        {% else %}
+            <div class="text-center p-4 bg-light rounded">
+                <i class="fas fa-hdd fa-3x text-muted"></i>
+                <p class="mt-2 text-muted">Brak zdjęcia</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <table class="table component-details-table">
+            <tr><th>Model:</th><td>{{ component.name|default:"-" }}</td></tr>
+            <tr><th>Producent:</th><td>{{ component.producer.name|default:"-" }}</td></tr>
+            <tr><th>MPN:</th><td>{{ component.mpn|default:"-" }}</td></tr>
+            <tr><th>EAN:</th><td>{{ component.ean|default:"-" }}</td></tr>
+            <tr><th>UPC:</th><td>{{ component.upc|default:"-" }}</td></tr>
+            <tr><th>Format:</th><td>{{ component.form_factor|default:"-" }}</td></tr>
+            <tr><th>Protokół:</th><td>{{ component.protocol|default:"-" }}</td></tr>
+            <tr><th>Pojemność:</th><td>{{ component.size|default:"-" }}</td></tr>
+            <tr><th>NAND:</th><td>{{ component.nand|default:"-" }}</td></tr>
+            <tr><th>Kontroler:</th><td>{{ component.controller|default:"-" }}</td></tr>
+            <tr><th>Cena:</th><td><strong>{{ component.price|floatformat:2 }} zł</strong></td></tr>
+            <!-- ✅ DODAJ LINK DO SKLEPU -->
+            {% if component.product_page %}
+            <tr><th>Sklep:</th><td><a href="{{ component.product_page }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-external-link-alt"></i> Zobacz w sklepie</a></td></tr>
+            {% endif %}
+        </table>
+    </div>
+</div>

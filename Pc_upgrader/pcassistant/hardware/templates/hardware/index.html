@@ -1,0 +1,122 @@
+{% extends 'hardware/base.html' %}
+
+{% block title %}Asystent Ulepszania Komputera{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+
+        <div class="bg-light p-5 rounded-3 text-center">
+            <a href="{% url 'hardware:upgrade' %}" class="btn btn-primary btn-lg">
+                <h1 class="display-4">Zbuduj lub ulepsz swój komputer</h1>
+                <p class="lead">Nasz system pomoże Ci dobrać najlepsze komponenty do Twojego zestawu.</p>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<h2 class="mb-4">Kategorie komponentów</h2>
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-desktop fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Obudowy</h5>
+                <p class="card-text">{{ case_count }} modeli</p>
+                <a href="{% url 'hardware:cases' %}" class="btn btn-outline-primary">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-microchip fa-3x mb-3 text-danger"></i>
+                <h5 class="card-title">Procesory</h5>
+                <p class="card-text">{{ cpu_count }} modeli</p>
+                <a href="{% url 'hardware:cpus' %}" class="btn btn-outline-danger">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-tv fa-3x mb-3 text-success"></i>
+                <h5 class="card-title">Karty graficzne</h5>
+                <p class="card-text">{{ gpu_count }} modeli</p>
+                <a href="{% url 'hardware:gpus' %}" class="btn btn-outline-success">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-memory fa-3x mb-3 text-info"></i>
+                <h5 class="card-title">Płyty główne</h5>
+                <p class="card-text">{{ motherboard_count }} modeli</p>
+                <a href="{% url 'hardware:motherboards' %}" class="btn btn-outline-info">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-memory fa-3x mb-3 text-warning"></i>
+                <h5 class="card-title">Pamięci RAM</h5>
+                <p class="card-text">{{ ram_count }} modeli</p>
+                <a href="{% url 'hardware:rams' %}" class="btn btn-outline-warning">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-plug fa-3x mb-3 text-secondary"></i>
+                <h5 class="card-title">Zasilacze</h5>
+                <p class="card-text">{{ psu_count }} modeli</p>
+                <a href="{% url 'hardware:psus' %}" class="btn btn-outline-secondary">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-hdd fa-3x mb-3 text-dark"></i>
+                <h5 class="card-title">Dyski SSD</h5>
+                <p class="card-text">{{ ssd_count }} modeli</p>
+                <a href="{% url 'hardware:ssds' %}" class="btn btn-outline-dark">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-database fa-3x mb-3 text-secondary"></i>
+                <h5 class="card-title">Dyski HDD</h5>
+                <p class="card-text">{{ hdd_count }} modeli</p>
+                <a href="{% url 'hardware:hdds' %}" class="btn btn-outline-secondary">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card component-card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-fan fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Chłodzenia CPU</h5>
+                <p class="card-text">{{ cooler_count }} modeli</p>
+                <a href="{% url 'hardware:coolers' %}" class="btn btn-outline-primary">Zobacz</a>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

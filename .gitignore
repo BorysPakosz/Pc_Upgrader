@@ -1,0 +1,50 @@
+# =========================
+# Środowisko IDE / Edytory
+# =========================
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =========================
+# Środowiska wirtualne Pythona
+# =========================
+venv/
+env/
+.venv/
+
+# =========================
+# Skompilowane pliki i cache Pythona
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# =========================
+# Zmienne środowiskowe i hasła (KRYTYCZNE!)
+# =========================
+.env
+.env.local
+*.pem
+
+# =========================
+# Bazy danych (np. lokalna baza Django)
+# =========================
+db.sqlite3
+db.sqlite3-journal
+
+# =========================
+# Logi z działania aplikacji
+# =========================
+*.log
+logs/
+
+# =========================
+# Pliki systemowe OS (Windows / macOS)
+# =========================
+Thumbs.db
+desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride

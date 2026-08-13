@@ -1,0 +1,49 @@
+{% extends "hardware/base.html" %}
+{% block title %}Usuń komputer{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-trash"></i>
+                        Usuń komputer
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Uwaga!</strong> Ta operacja jest nieodwracalna.
+                    </div>
+
+                    <p>Czy na pewno chcesz usunąć komputer <strong>"{{ computer.name }}"</strong>?</p>
+
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-microchip"></i> {{ computer.cpu_name }}<br>
+                            <i class="fas fa-tv"></i> {{ computer.gpu_name }}<br>
+                            <i class="fas fa-calendar"></i> Utworzony: {{ computer.created_at|date:"d.m.Y" }}
+                        </small>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'hardware:my_computers' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i>
+                                Anuluj
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                                Tak, usuń komputer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

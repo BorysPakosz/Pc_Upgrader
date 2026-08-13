@@ -1,0 +1,178 @@
+{% extends 'hardware/base.html' %}
+
+{% block title %}Zasilacze - Baza komponentów{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-4">
+            <i class="fas fa-plug text-primary"></i> Zasilacze
+        </h1>
+    </div>
+</div>
+
+<!-- Filtry -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtry</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label for="producer" class="form-label">Producent</label>
+                <select name="producer" id="producer" class="form-select">
+                    <option value="">Wszyscy producenci</option>
+                    {% for producer in producers %}
+                        <option value="{{ producer.name }}" {% if selected_producer == producer.name %}selected{% endif %}>
+                            {{ producer.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="efficiency_rating" class="form-label">Certyfikat sprawności</label>
+                <select name="efficiency_rating" id="efficiency_rating" class="form-select">
+                    <option value="">Wszystkie certyfikaty</option>
+                    {% for efficiency in efficiencies %}
+                        {% if efficiency %}
+                            <option value="{{ efficiency }}" {% if selected_efficiency == efficiency %}selected{% endif %}>
+                                {{ efficiency }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Filtruj
+                </button>
+                <a href="{% url 'hardware:psus' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Wyczyść filtry
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista zasilaczy -->
+<div class="row">
+    {% for psu in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 component-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ psu.name }}</h5>
+                    <p class="card-text">
+                        <strong>Producent:</strong> {{ psu.producer.name|default:"Nieznany" }}<br>
+                        {% if psu.watt %}
+                            <strong>Moc:</strong> {{ psu.watt }} W<br>
+                        {% endif %}
+                        {% if psu.efficiency_rating %}
+                            <strong>Certyfikat:</strong> 
+                            <span class="badge bg-success">{{ psu.efficiency_rating }}</span><br>
+                        {% endif %}
+                        {% if psu.form_factor %}
+                            <strong>Format:</strong> {{ psu.form_factor }}<br>
+                        {% endif %}
+                        {% if psu.modular %}
+                            <strong>Modularny:</strong>
+                            <span class="text-success">Tak</span><br>
+                        {% else %}
+                            <strong>Modularny:</strong>
+                            <span class="text-secondary">Nie</span><br>
+                        {% endif %}
+                        {% if psu.pfc %}
+                            <strong>PFC:</strong> {{ psu.pfc }}<br>
+                        {% endif %}
+                        {% if psu.fan_size %}
+                            <strong>Wentylator:</strong> {{ psu.fan_size }} mm<br>
+                        {% endif %}
+                        {% if psu.warranty %}
+                            <strong>Gwarancja:</strong> {{ psu.warranty }} lat<br>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if psu.price %}
+                            <span class="h5 text-primary mb-0">{{ psu.price }} zł</span>
+                        {% else %}
+                            <span class="text-muted">Brak ceny</span>
+                        {% endif %}
+                        {% if psu.product_page %}
+                            <a href="{{ psu.product_page }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Zobacz
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i>
+                Nie znaleziono zasilaczy odpowiadających kryteriom wyszukiwania.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginacja" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="text-center text-muted mt-2">
+            Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            ({{ page_obj.paginator.count }} elementów)
+        </div>
+    </nav>
+{% endif %}
+
+<!-- Statystyki -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <i class="fas fa-chart-bar"></i>
+            Znaleziono {{ psus.count }} zasilaczy
+        </div>
+    </div>
+</div>
+{% endblock %}

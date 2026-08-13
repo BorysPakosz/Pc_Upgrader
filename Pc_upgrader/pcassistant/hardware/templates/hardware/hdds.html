@@ -1,0 +1,167 @@
+{% extends 'hardware/base.html' %}
+
+{% block title %}Dyski HDD - Baza komponentów{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-4">
+            <i class="fas fa-hdd text-primary"></i> Dyski HDD
+        </h1>
+    </div>
+</div>
+
+<!-- Filtry -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtry</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label for="producer" class="form-label">Producent</label>
+                <select name="producer" id="producer" class="form-select">
+                    <option value="">Wszyscy producenci</option>
+                    {% for producer in producers %}
+                        <option value="{{ producer.name }}" {% if selected_producer == producer.name %}selected{% endif %}>
+                            {{ producer.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="form_factor" class="form-label">Format</label>
+                <select name="form_factor" id="form_factor" class="form-select">
+                    <option value="">Wszystkie formaty</option>
+                    {% for form_factor in form_factors %}
+                        {% if form_factor %}
+                            <option value="{{ form_factor }}" {% if selected_form_factor == form_factor %}selected{% endif %}>
+                                {{ form_factor }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Filtruj
+                </button>
+                <a href="{% url 'hardware:hdds' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Wyczyść filtry
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista dysków HDD -->
+<div class="row">
+    {% for hdd in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 component-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hdd.name }}</h5>
+                    <p class="card-text">
+                        <strong>Producent:</strong> {{ hdd.producer.name|default:"Nieznany" }}<br>
+                        {% if hdd.size %}
+                            <strong>Pojemność:</strong> {{ hdd.size }}<br>
+                        {% endif %}
+                        {% if hdd.form_factor %}
+                            <strong>Format:</strong> {{ hdd.form_factor }}<br>
+                        {% endif %}
+                        {% if hdd.rpm %}
+                            <strong>Prędkość obrotowa:</strong> {{ hdd.rpm|floatformat:0 }} RPM<br>
+                        {% endif %}
+                        {% if hdd.cache %}
+                            <strong>Pamięć cache:</strong> {{ hdd.cache }}<br>
+                        {% endif %}
+                        {% if hdd.mpn %}
+                            <strong>MPN:</strong> {{ hdd.mpn }}<br>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if hdd.price %}
+                            <span class="h5 text-primary mb-0">{{ hdd.price }} zł</span>
+                        {% else %}
+                            <span class="text-muted">Brak ceny</span>
+                        {% endif %}
+                        {% if hdd.product_page %}
+                            <a href="{{ hdd.product_page }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Zobacz
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i>
+                Nie znaleziono dysków HDD odpowiadających kryteriom wyszukiwania.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginacja" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="text-center text-muted mt-2">
+            Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            ({{ page_obj.paginator.count }} elementów)
+        </div>
+    </nav>
+{% endif %}
+
+<!-- Statystyki -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <i class="fas fa-chart-bar"></i>
+            Znaleziono {{ hdds.count }} dysków HDD (sortowane według pojemności)
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-md-4">
+        {% if component.img_src %}
+            <img src="{{ component.img_src }}" class="component-image-large" alt="{{ component.name }}">
+        {% else %}
+            <div class="text-center p-4 bg-light rounded">
+                <i class="fas fa-circuit-board fa-3x text-muted"></i>
+                <p class="mt-2 text-muted">Brak zdjęcia</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <table class="table component-details-table">
+            <tr><th>Model:</th><td>{{ component.name|default:"-" }}</td></tr>
+            <tr><th>Producent:</th><td>{{ component.producer.name|default:"-" }}</td></tr>
+            <tr><th>MPN:</th><td>{{ component.mpn|default:"-" }}</td></tr>
+            <tr><th>EAN:</th><td>{{ component.ean|default:"-" }}</td></tr>
+            <tr><th>UPC:</th><td>{{ component.upc|default:"-" }}</td></tr>
+            <tr><th>Socket:</th><td>{{ component.socket|default:"-" }}</td></tr>
+            <tr><th>Chipset:</th><td>{{ component.chipset|default:"-" }}</td></tr>
+            <tr><th>Odblokowany:</th><td>{% if component.unlocked %}Tak{% elif component.unlocked == False %}Nie{% else %}-{% endif %}</td></tr>
+            <tr><th>Format:</th><td>{{ component.form_factor|default:"-" }}</td></tr>
+            <tr><th>Typ pamięci:</th><td>{{ component.memory_type|default:"-" }}</td></tr>
+            <tr><th>Max pamięć:</th><td>{{ component.memory_capacity|default:"-" }}</td></tr>
+            <tr><th>Sloty RAM:</th><td>{% if component.ram_slots %}{{ component.ram_slots }}{% else %}-{% endif %}</td></tr>
+            <tr><th>Porty SATA:</th><td>{% if component.sata %}{{ component.sata }}{% else %}-{% endif %}</td></tr>
+            <tr><th>Porty VGA:</th><td>{% if component.vga %}{{ component.vga }}{% else %}-{% endif %}</td></tr>
+            <tr><th>Porty DVI:</th><td>{% if component.dvi %}{{ component.dvi }}{% else %}-{% endif %}</td></tr>
+            <tr><th>DisplayPort:</th><td>{% if component.display_port %}{{ component.display_port }}{% else %}-{% endif %}</td></tr>
+            <tr><th>HDMI:</th><td>{% if component.hdmi %}{{ component.hdmi }}{% else %}-{% endif %}</td></tr>
+            <tr><th>WiFi:</th><td>{% if component.wifi %}Tak{% elif component.wifi == False %}Nie{% else %}-{% endif %}</td></tr>
+            <tr><th>Zintegrowana grafika:</th><td>{% if component.integrated_graphics %}Tak{% elif component.integrated_graphics == False %}Nie{% else %}-{% endif %}</td></tr>
+            <tr><th>Cena:</th><td><strong>{{ component.price|floatformat:2 }} zł</strong></td></tr>
+            <!-- ✅ DODAJ LINK DO SKLEPU -->
+            {% if component.product_page %}
+            <tr><th>Sklep:</th><td><a href="{{ component.product_page }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-external-link-alt"></i> Zobacz w sklepie</a></td></tr>
+            {% endif %}
+        </table>
+    </div>
+</div>

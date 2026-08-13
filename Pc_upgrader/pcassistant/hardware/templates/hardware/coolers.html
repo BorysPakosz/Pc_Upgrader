@@ -1,0 +1,177 @@
+{% extends 'hardware/base.html' %}
+
+{% block title %}Chłodzenia CPU - Baza komponentów{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-4">
+            <i class="fas fa-fan text-primary"></i> Chłodzenia CPU
+        </h1>
+    </div>
+</div>
+
+<!-- Filtry -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtry</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label for="producer" class="form-label">Producent</label>
+                <select name="producer" id="producer" class="form-select">
+                    <option value="">Wszyscy producenci</option>
+                    {% for producer in producers %}
+                        <option value="{{ producer.name }}" {% if selected_producer == producer.name %}selected{% endif %}>
+                            {{ producer.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="socket" class="form-label">Socket</label>
+                <select name="socket" id="socket" class="form-select">
+                    <option value="">Wszystkie sockety</option>
+                    {% for socket in sockets %}
+                        {% if socket %}
+                            <option value="{{ socket }}" {% if selected_socket == socket %}selected{% endif %}>
+                                {{ socket }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Filtruj
+                </button>
+                <a href="{% url 'hardware:coolers' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Wyczyść filtry
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista chłodzeń -->
+<div class="row">
+    {% for cooler in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 component-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ cooler.name }}</h5>
+                    <p class="card-text">
+                        <strong>Producent:</strong> {{ cooler.producer.name|default:"Nieznany" }}<br>
+                        {% if cooler.height %}
+                            <strong>Wysokość:</strong> {{ cooler.height }} mm<br>
+                        {% endif %}
+                        {% if cooler.tdp %}
+                            <strong>TDP:</strong> {{ cooler.tdp }} W<br>
+                        {% endif %}
+                        {% if cooler.supported_sockets %}
+                            <strong>Obsługiwane sockety:</strong> {{ cooler.supported_sockets }}<br>
+                        {% endif %}
+
+                        <!-- Wentylatory -->
+                        {% if cooler.fans_80mm or cooler.fans_92mm or cooler.fans_120mm or cooler.fans_140mm or cooler.fans_200mm %}
+                            <strong>Wentylatory:</strong>
+                            {% if cooler.fans_80mm %}80mm: {{ cooler.fans_80mm }}{% endif %}
+                            {% if cooler.fans_92mm %}92mm: {{ cooler.fans_92mm }}{% endif %}
+                            {% if cooler.fans_120mm %}120mm: {{ cooler.fans_120mm }}{% endif %}
+                            {% if cooler.fans_140mm %}140mm: {{ cooler.fans_140mm }}{% endif %}
+                            {% if cooler.fans_200mm %}200mm: {{ cooler.fans_200mm }}{% endif %}
+                            <br>
+                        {% endif %}
+
+                        {% if cooler.additional_fan_support %}
+                            <strong>Dodatkowe wentylatory:</strong>
+                            <span class="text-success">Obsługiwane</span><br>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if cooler.price %}
+                            <span class="h5 text-primary mb-0">{{ cooler.price }} zł</span>
+                        {% else %}
+                            <span class="text-muted">Brak ceny</span>
+                        {% endif %}
+                        {% if cooler.product_page %}
+                            <a href="{{ cooler.product_page }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Zobacz
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i>
+                Nie znaleziono chłodzeń odpowiadających kryteriom wyszukiwania.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+        {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginacja" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="text-center text-muted mt-2">
+            Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            ({{ page_obj.paginator.count }} elementów)
+        </div>
+    </nav>
+{% endif %}
+
+<!-- Statystyki -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <i class="fas fa-chart-bar"></i>
+            Znaleziono {{ coolers.count }} chłodzeń CPU
+        </div>
+    </div>
+</div>
+{% endblock %}
